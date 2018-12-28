@@ -10,16 +10,8 @@ export default WrappedComponent => {
 
     constructor(props) {
         super(props);
-        this.getData();
     }
 
-    getData() {
-        const name = 'Yagnesh'
-        setTimeout(() => {
-            this.setState({name});
-        }, 2000);
-    }
-    
 
     render() {
       return <div> <h1>Hello,</h1><WrappedComponent {...this.state} /></div>;
