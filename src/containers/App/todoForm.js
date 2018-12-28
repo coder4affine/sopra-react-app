@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 
 const todoForm = ({ addTask, todo, onChangeText }) => {
@@ -16,4 +16,4 @@ todoForm.propTypes = {
   onChangeText: PropTypes.func.isRequired,
 };
 
-export default todoForm;
+export default memo(todoForm);

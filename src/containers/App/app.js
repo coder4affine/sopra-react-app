@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 // import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -14,7 +14,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import styles from './styles';
 import TodoForm from './todoForm';
 
-class App extends Component {
+class App extends PureComponent {
   state = {
     todo: '',
     todoList: [],
