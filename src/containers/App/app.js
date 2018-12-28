@@ -1,18 +1,32 @@
 import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItemText from '@material-ui/core/ListItemText';
+import Checkbox from '@material-ui/core/Checkbox';
+import DeleteIcon from '@material-ui/icons/Delete';
 import styles from './styles';
+import TodoForm from './todoForm';
 
 class App extends Component {
   state = {
     todo: '',
     todoList: [],
+    type: 'all',
   };
 
   onChangeText = e => {
     this.setState({ todo: e.target.value });
   };
 
-  addTask = () => {
+  addTask = e => {
+    e.preventDefault();
     const { todo, todoList } = this.state;
     this.setState({
       todoList: [
@@ -32,7 +46,7 @@ class App extends Component {
     const index = todoList.findIndex(x => x.id === id);
     const updatedTodos = [
       ...todoList.slice(0, index),
-      { ...todoList[index], isDone: true },
+      { ...todoList[index], isDone: !todoList[index].isDone },
       ...todoList.slice(index + 1),
     ];
 
@@ -46,27 +60,61 @@ class App extends Component {
     });
   };
 
+  filterTodo = type => {
+    this.setState({ type });
+  };
+
   render() {
-    const { todo, todoList } = this.state;
+    const { todo, todoList, type } = this.state;
     return (
-      <div style={styles.wrapper}>
-        <h1>Todo Application</h1>
-        <div>
-          <input type="text" value={todo} onChange={this.onChangeText} />
-          <input type="button" value="Add Task" onClick={this.addTask} />
-        </div>
-        <div>
-          {todoList.map(item => (
-            <div key={item.id}>
-              <input
-                type="checkbox"
-                checked={item.isDone}
-                onChange={() => this.completeTask(item.id)}
-              />
-              <span>{item.text}</span>
-              <input type="button" value="Delete" onClick={() => this.deleteTask(item.id)} />
-            </div>
-          ))}
+      <div>
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton color="inherit" aria-label="Menu">
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" color="inherit">
+              Todo Application
+            </Typography>
+          </Toolbar>
+        </AppBar>
+
+        <div style={styles.wrapper}>
+          <TodoForm todo={todo} addTask={this.addTask} onChangeText={this.onChangeText} />
+          <List>
+            {todoList
+              .filter(item => {
+                switch (type) {
+                  case 'pending':
+                    return !item.isDone;
+                  case 'completed':
+                    return item.isDone;
+                  default:
+                    return true;
+                }
+              })
+              .map(item => (
+                <ListItem key={item.id} role={undefined} dense button>
+                  <Checkbox
+                    checked={item.isDone}
+                    tabIndex={-1}
+                    onClick={() => this.completeTask(item.id)}
+                    disableRipple
+                  />
+                  <ListItemText primary={item.text} />
+                  <ListItemSecondaryAction>
+                    <IconButton aria-label="Comments" onClick={() => this.deleteTask(item.id)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              ))}
+          </List>
+          <div>
+            <input type="button" value="All" onClick={() => this.filterTodo('all')} />
+            <input type="button" value="Pending" onClick={() => this.filterTodo('pending')} />
+            <input type="button" value="Completed" onClick={() => this.filterTodo('completed')} />
+          </div>
         </div>
       </div>
     );
